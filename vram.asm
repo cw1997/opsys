@@ -9,11 +9,13 @@ main:
     mov ax,0x7c0           ;设置数据段的段基地址 
     mov ds,ax
 
+    call clear
+
     mov ax,0xb800 ; set vram segment to es
     mov es,ax
 
-    mov cx, end-myStr-1
-    mov dx, (end-myStr)*2
+    mov cx, mystrEnd-myStr-1
+    mov dx, (mystrEnd-myStr)*2
 
     showStr:
         mov bx,cx
@@ -33,6 +35,28 @@ main:
 
 myStr:
     db 'hello VRAM. by cw1997. my github page: https://github.com/cw1997.', 0x10 ,' my website is : http://www.changwei.me' 
+mystrEnd:
+
+clear:
+    mov ax,0xb800 ; set vram segment to es
+    mov es,ax
+
+    mov cx, 80*25-1 ; vga text mode
+    mov dx, (80*25-1)*2 
+
+    mov al, ' '
+    mov ah, 0x07
+
+    clr:
+    mov bx,dx
+    mov word [es:bx], ax
+    dec cx
+    sub dx, 2
+
+    jne clr
+
+    ret
+    
 
 end:
     times 510-($-$$) db 0
